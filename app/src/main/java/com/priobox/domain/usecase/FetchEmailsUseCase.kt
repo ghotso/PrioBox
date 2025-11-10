@@ -7,6 +7,7 @@ import javax.inject.Inject
 class FetchEmailsUseCase @Inject constructor(
     private val mailRepository: MailRepository
 ) {
-    suspend operator fun invoke(account: EmailAccount) = mailRepository.syncInbox(account)
+    suspend operator fun invoke(account: EmailAccount, folderServerId: String) =
+        mailRepository.syncFolder(account, folderServerId)
 }
 

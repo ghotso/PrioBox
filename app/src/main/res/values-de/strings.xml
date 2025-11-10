@@ -75,9 +75,12 @@
 
     <string name="content_back">Zurück</string>
     <string name="content_accounts_menu">Konto wechseln</string>
+    <string name="content_open_navigation">Navigationsmenü öffnen</string>
     <string name="content_refresh">Aktualisieren</string>
     <string name="content_compose">Verfassen</string>
     <string name="badge_vip">VIP</string>
     <string name="content_expand_dropdown">%1$s auswählen</string>
+
+    <string name="drawer_folders_title">Ordner</string>
 </resources>
 

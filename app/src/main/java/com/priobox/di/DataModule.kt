@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.priobox.data.db.AppDatabase
 import com.priobox.data.db.dao.EmailAccountDao
+import com.priobox.data.db.dao.EmailFolderDao
 import com.priobox.data.db.dao.EmailMessageDao
 import com.priobox.data.db.dao.VipSenderDao
 import dagger.Module
@@ -32,5 +33,8 @@ object DataModule {
 
     @Provides
     fun provideVipSenderDao(database: AppDatabase): VipSenderDao = database.vipSenderDao()
+
+    @Provides
+    fun provideEmailFolderDao(database: AppDatabase): EmailFolderDao = database.emailFolderDao()
 }
 

@@ -15,11 +15,11 @@ interface EmailMessageDao {
     @Query(
         """
         SELECT * FROM email_messages
-        WHERE accountId = :accountId
+        WHERE accountId = :accountId AND folder = :folder
         ORDER BY timestamp DESC
         """
     )
-    fun observeMessages(accountId: Long): Flow<List<EmailMessage>>
+    fun observeMessages(accountId: Long, folder: String): Flow<List<EmailMessage>>
 
     @Query(
         """
@@ -51,14 +51,19 @@ interface EmailMessageDao {
     @Update
     suspend fun update(message: EmailMessage)
 
-    @Query("DELETE FROM email_messages WHERE accountId = :accountId AND uid NOT IN (:uids)")
-    suspend fun deleteNotIn(accountId: Long, uids: List<String>)
+    @Query("DELETE FROM email_messages WHERE accountId = :accountId AND folder = :folder AND uid NOT IN (:uids)")
+    suspend fun deleteNotIn(accountId: Long, folder: String, uids: List<String>)
+
+    @Query("DELETE FROM email_messages WHERE accountId = :accountId AND folder = :folder")
+    suspend fun deleteForFolder(accountId: Long, folder: String)
 
     @Transaction
-    suspend fun replaceMessages(accountId: Long, items: List<EmailMessage>) {
+    suspend fun replaceMessages(accountId: Long, folder: String, items: List<EmailMessage>) {
         val uids = items.map { it.uid }
         if (uids.isNotEmpty()) {
-            deleteNotIn(accountId, uids)
+            deleteNotIn(accountId, folder, uids)
+        } else {
+            deleteForFolder(accountId, folder)
         }
         upsertAll(items)
     }

@@ -1,7 +1,8 @@
 package com.priobox.ui.main
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -35,7 +36,7 @@ object Destinations {
 fun MainNavigation(
     navController: NavHostController = rememberNavController()
 ) {
-    val rootEntry = remember(navController) { navController.getBackStackEntry(navController.graph.id) }
+    val activity = LocalContext.current as ComponentActivity
 
     NavHost(
         navController = navController,
@@ -43,7 +44,7 @@ fun MainNavigation(
     ) {
         composable(Destinations.INBOX) {
             val viewModel: InboxViewModel = hiltViewModel()
-            val settingsViewModel: SettingsViewModel = hiltViewModel(rootEntry)
+            val settingsViewModel: SettingsViewModel = hiltViewModel(activity)
             val state = viewModel.state.collectAsStateWithLifecycle().value
             InboxScreen(
                 state = state,
@@ -88,7 +89,7 @@ fun MainNavigation(
         }
 
         composable(Destinations.SETTINGS) {
-            val viewModel: SettingsViewModel = hiltViewModel(rootEntry)
+            val viewModel: SettingsViewModel = hiltViewModel(activity)
             val state = viewModel.state.collectAsStateWithLifecycle().value
             SettingsScreen(
                 state = state,
@@ -105,7 +106,7 @@ fun MainNavigation(
         }
 
         composable(Destinations.ACCOUNT_EDIT) {
-            val viewModel: SettingsViewModel = hiltViewModel(rootEntry)
+            val viewModel: SettingsViewModel = hiltViewModel(activity)
             val settingsState = viewModel.state.collectAsStateWithLifecycle().value
             AccountEditScreen(
                 state = settingsState.accountEditorState,
@@ -139,7 +140,7 @@ fun MainNavigation(
         composable(
             route = "${Destinations.MESSAGE_DETAIL}/{messageId}",
             arguments = listOf(navArgument("messageId") { type = NavType.LongType })
-        ) { backStackEntry ->
+        ) { _ ->
             val viewModel: MessageDetailViewModel = hiltViewModel()
             val state = viewModel.state.collectAsStateWithLifecycle().value
             MessageDetailScreen(

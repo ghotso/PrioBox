@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.priobox.data.model.EmailFolder
 import com.priobox.data.repository.AccountRepository
 import com.priobox.data.repository.MailRepository
 import com.priobox.domain.usecase.FetchEmailsUseCase
@@ -32,7 +33,7 @@ class ImapSyncWorker @AssistedInject constructor(
                 val existingVipUids = mailRepository.getVipMessages(account.id)
                     .map { it.uid }
                     .toSet()
-                fetchEmailsUseCase(account)
+                fetchEmailsUseCase(account, EmailFolder.INBOX_SERVER_ID)
                 val updatedVipMessages = mailRepository.getVipMessages(account.id)
                 updatedVipMessages
                     .filter { it.uid !in existingVipUids }

@@ -1,8 +1,10 @@
 package com.priobox.data.repository
 
+import com.priobox.data.db.dao.EmailFolderDao
 import com.priobox.data.db.dao.EmailMessageDao
 import com.priobox.data.db.dao.VipSenderDao
 import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailFolder
 import com.priobox.data.model.EmailMessage
 import com.priobox.data.model.VipSender
 import com.priobox.data.network.ImapService
@@ -19,15 +21,16 @@ import javax.inject.Singleton
 @Singleton
 class MailRepository @Inject constructor(
     private val emailMessageDao: EmailMessageDao,
+    private val emailFolderDao: EmailFolderDao,
     private val vipSenderDao: VipSenderDao,
     private val imapService: ImapService,
     private val smtpService: SmtpService,
     private val credentialStorage: CredentialStorage
 ) {
 
-    fun observeInbox(accountId: Long): Flow<List<EmailMessage>> =
+    fun observeFolderMessages(accountId: Long, folderServerId: String): Flow<List<EmailMessage>> =
         combine(
-            emailMessageDao.observeMessages(accountId),
+            emailMessageDao.observeMessages(accountId, folderServerId),
             vipSenderDao.observeVipSenders(accountId)
         ) { messages, vipSenders ->
             val vipSet = vipSenders.map { it.emailAddress.lowercase() }.toSet()
@@ -43,20 +46,26 @@ class MailRepository @Inject constructor(
             messages.map { it.copy(isVip = vipSet.contains(it.sender.lowercase())) }
         }.flowOn(Dispatchers.IO)
 
-    suspend fun syncInbox(account: EmailAccount) = withContext(Dispatchers.IO) {
+    suspend fun syncFolder(account: EmailAccount, folderServerId: String) = withContext(Dispatchers.IO) {
         val password = credentialStorage.getPassword(account.id)
             ?: throw IllegalStateException("Credentials missing for ${account.emailAddress}")
 
-        val vipSenders = vipSenderDao.observeVipSenders(account.id).first()
-        val vipSet = vipSenders.map { it.emailAddress.lowercase() }.toSet()
-
-        val remoteMessages = imapService.fetchInbox(account, password).map { message ->
-            val sender = message.sender.lowercase()
-            message.copy(isVip = vipSet.contains(sender))
+        val remoteMessages = imapService.fetchMessages(account, password, folderServerId).map {
+            it.copy(folder = folderServerId)
         }
 
-        emailMessageDao.replaceMessages(account.id, remoteMessages)
+        emailMessageDao.replaceMessages(account.id, folderServerId, remoteMessages)
     }
+
+    suspend fun syncFolders(account: EmailAccount) = withContext(Dispatchers.IO) {
+        val password = credentialStorage.getPassword(account.id)
+            ?: throw IllegalStateException("Credentials missing for ${account.emailAddress}")
+        val remoteFolders = imapService.fetchFolders(account, password)
+        emailFolderDao.replaceFolders(account.id, remoteFolders)
+    }
+
+    fun observeFolders(accountId: Long): Flow<List<EmailFolder>> =
+        emailFolderDao.observeFolders(accountId)
 
     suspend fun sendEmail(
         account: EmailAccount,

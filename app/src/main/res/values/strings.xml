@@ -84,10 +84,14 @@
     <!-- Common content descriptions -->
     <string name="content_back">Back</string>
     <string name="content_accounts_menu">Switch account</string>
+    <string name="content_open_navigation">Open navigation menu</string>
     <string name="content_refresh">Refresh</string>
     <string name="content_compose">Compose</string>
     <string name="badge_vip">VIP</string>
     <string name="content_expand_dropdown">Select %1$s</string>
+
+    <!-- Navigation drawer -->
+    <string name="drawer_folders_title">Folders</string>
 </resources>
 
 

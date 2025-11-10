@@ -1,6 +1,7 @@
 package com.priobox.data.network
 
 import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailFolder
 import com.priobox.data.model.EmailMessage
 import java.text.Normalizer
 import java.util.Date
@@ -11,7 +12,12 @@ import javax.mail.internet.InternetAddress
 
 class MailParser @Inject constructor() {
 
-    fun parseMessage(account: EmailAccount, message: Message, uidOverride: String? = null): EmailMessage? {
+    fun parseMessage(
+        account: EmailAccount,
+        message: Message,
+        uidOverride: String? = null,
+        folder: String = EmailFolder.INBOX_SERVER_ID
+    ): EmailMessage? {
         val uid = uidOverride ?: message.messageNumber.toString()
         val fromAddress = message.from?.firstOrNull()?.safeAddress() ?: return null
         val subject = message.subject?.clean() ?: "(No subject)"
@@ -26,6 +32,7 @@ class MailParser @Inject constructor() {
         return EmailMessage(
             accountId = account.id,
             uid = uid,
+            folder = folder,
             sender = fromAddress,
             subject = subject,
             preview = preview,
