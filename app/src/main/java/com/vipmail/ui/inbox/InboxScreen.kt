@@ -181,6 +181,9 @@ fun InboxScreen(
                                             )
                                         )
                                     }
+                                },
+                                onOpenMessage = {
+                                    onAction(InboxViewModel.Action.OpenMessage(message.id))
                                 }
                             )
                             HorizontalDivider()
@@ -195,12 +198,13 @@ fun InboxScreen(
 @Composable
 private fun EmailRow(
     message: EmailMessage,
-    onToggleVip: () -> Unit
+    onToggleVip: () -> Unit,
+    onOpenMessage: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onOpenMessage() }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

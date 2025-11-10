@@ -52,13 +52,11 @@ fun AccountEditScreen(
     onTestImap: () -> Unit,
     onTestSmtp: () -> Unit
 ) {
-    var formState by remember(state) { mutableStateOf(state) }
-
     fun update(block: SettingsViewModel.AccountEditorState.() -> SettingsViewModel.AccountEditorState) {
-        formState = formState.block()
-        onUpdate(formState)
+        onUpdate(state.block())
     }
 
+    val formState = state
     val isNewAccount = formState.id == null
     val requiredFieldsFilled =
         formState.displayName.isNotBlank() &&
@@ -271,7 +269,6 @@ fun AccountEditScreen(
 
             Button(
                 onClick = {
-                    onUpdate(formState)
                     onSave(formState)
                     onClose()
                 },

@@ -80,11 +80,11 @@ fun SettingsScreen(
                             Text(account.displayName, fontWeight = FontWeight.SemiBold)
                             Text(account.emailAddress)
                             Text(
-                                text = "IMAP: ${account.imapServer}:${account.imapPort}",
+                                text = "IMAP: ${account.imapServer}:${account.imapPort} (${account.imapSecurity.displayName})",
                                 modifier = Modifier.padding(top = 4.dp)
                             )
                             Text(
-                                text = "SMTP: ${account.smtpServer}:${account.smtpPort}",
+                                text = "SMTP: ${account.smtpServer}:${account.smtpPort} (${account.smtpSecurity.displayName})",
                                 modifier = Modifier.padding(top = 2.dp)
                             )
                             TextButton(

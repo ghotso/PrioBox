@@ -4,13 +4,17 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.vipmail.ui.compose.ComposeScreen
 import com.vipmail.ui.compose.ComposeViewModel
 import com.vipmail.ui.inbox.InboxScreen
 import com.vipmail.ui.inbox.InboxViewModel
+import com.vipmail.ui.inbox.MessageDetailScreen
+import com.vipmail.ui.inbox.MessageDetailViewModel
 import com.vipmail.ui.settings.AccountEditScreen
 import com.vipmail.ui.settings.SettingsScreen
 import com.vipmail.ui.settings.SettingsViewModel
@@ -23,6 +27,7 @@ object Destinations {
     const val SETTINGS = "settings"
     const val ACCOUNT_EDIT = "account_edit"
     const val VIP = "vip"
+    const val MESSAGE_DETAIL = "message_detail"
 }
 
 @Composable
@@ -44,6 +49,8 @@ fun MainNavigation(
                         InboxViewModel.Action.OpenCompose -> navController.navigate(Destinations.COMPOSE)
                         InboxViewModel.Action.OpenSettings -> navController.navigate(Destinations.SETTINGS)
                         is InboxViewModel.Action.OpenVip -> navController.navigate(Destinations.VIP)
+                        is InboxViewModel.Action.OpenMessage ->
+                            navController.navigate("${Destinations.MESSAGE_DETAIL}/${action.messageId}")
                         InboxViewModel.Action.NavigateBack -> navController.navigateUp()
                         else -> Unit
                     }
@@ -90,7 +97,10 @@ fun MainNavigation(
         }
 
         composable(Destinations.ACCOUNT_EDIT) {
-            val viewModel: SettingsViewModel = hiltViewModel()
+            val parentEntry = remember(navController) {
+                navController.getBackStackEntry(Destinations.SETTINGS)
+            }
+            val viewModel: SettingsViewModel = hiltViewModel(parentEntry)
             val settingsState = viewModel.state.collectAsStateWithLifecycle().value
             AccountEditScreen(
                 state = settingsState.accountEditorState,
@@ -118,6 +128,18 @@ fun MainNavigation(
                 onNewVipChange = viewModel::updateNewVipEmail,
                 onAddVip = viewModel::addVip,
                 onRemoveVip = viewModel::removeVip
+            )
+        }
+
+        composable(
+            route = "${Destinations.MESSAGE_DETAIL}/{messageId}",
+            arguments = listOf(navArgument("messageId") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val viewModel: MessageDetailViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsStateWithLifecycle().value
+            MessageDetailScreen(
+                state = state,
+                onBack = { navController.navigateUp() }
             )
         }
     }

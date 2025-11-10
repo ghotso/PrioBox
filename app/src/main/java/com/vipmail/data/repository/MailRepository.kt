@@ -104,5 +104,11 @@ class MailRepository @Inject constructor(
 
     suspend fun testSmtpConnection(account: EmailAccount, password: String): Result<Unit> =
         smtpService.testConnection(account, password)
+
+    fun observeMessage(messageId: Long): Flow<EmailMessage?> =
+        emailMessageDao.observeMessage(messageId)
+
+    suspend fun markMessageRead(messageId: Long) =
+        emailMessageDao.updateReadState(messageId, true)
 }
 

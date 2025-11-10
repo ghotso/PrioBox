@@ -34,6 +34,7 @@ class InboxViewModel @Inject constructor(
         data class SelectAccount(val account: EmailAccount) : Action
         data class Refresh(val account: EmailAccount) : Action
         data class ToggleVip(val accountId: Long, val email: String) : Action
+        data class OpenMessage(val messageId: Long) : Action
     }
 
     data class State(
@@ -99,6 +100,7 @@ class InboxViewModel @Inject constructor(
             }
             is Action.Refresh -> refresh(action.account)
             is Action.ToggleVip -> toggleVip(action.accountId, action.email)
+            is Action.OpenMessage -> Unit
             else -> Unit
         }
     }

@@ -71,5 +71,8 @@ interface EmailMessageDao {
         """
     )
     suspend fun updateVipStatus(accountId: Long, email: String, isVip: Boolean)
+
+    @Query("UPDATE email_messages SET isRead = :isRead WHERE id = :id")
+    suspend fun updateReadState(id: Long, isRead: Boolean)
 }
 
