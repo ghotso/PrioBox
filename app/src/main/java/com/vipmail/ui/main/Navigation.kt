@@ -1,6 +1,7 @@
-package com.vipmail.ui.main
+package com.priobox.ui.main
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -9,17 +10,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.vipmail.ui.compose.ComposeScreen
-import com.vipmail.ui.compose.ComposeViewModel
-import com.vipmail.ui.inbox.InboxScreen
-import com.vipmail.ui.inbox.InboxViewModel
-import com.vipmail.ui.inbox.MessageDetailScreen
-import com.vipmail.ui.inbox.MessageDetailViewModel
-import com.vipmail.ui.settings.AccountEditScreen
-import com.vipmail.ui.settings.SettingsScreen
-import com.vipmail.ui.settings.SettingsViewModel
-import com.vipmail.ui.vip.VipListScreen
-import com.vipmail.ui.vip.VipViewModel
+import com.priobox.ui.compose.ComposeScreen
+import com.priobox.ui.compose.ComposeViewModel
+import com.priobox.ui.inbox.InboxScreen
+import com.priobox.ui.inbox.InboxViewModel
+import com.priobox.ui.inbox.MessageDetailScreen
+import com.priobox.ui.inbox.MessageDetailViewModel
+import com.priobox.ui.settings.AccountEditScreen
+import com.priobox.ui.settings.SettingsScreen
+import com.priobox.ui.settings.SettingsViewModel
+import com.priobox.ui.vip.VipListScreen
+import com.priobox.ui.vip.VipViewModel
 
 object Destinations {
     const val INBOX = "inbox"
@@ -34,12 +35,15 @@ object Destinations {
 fun MainNavigation(
     navController: NavHostController = rememberNavController()
 ) {
+    val rootEntry = remember(navController) { navController.getBackStackEntry(navController.graph.id) }
+
     NavHost(
         navController = navController,
         startDestination = Destinations.INBOX
     ) {
         composable(Destinations.INBOX) {
             val viewModel: InboxViewModel = hiltViewModel()
+            val settingsViewModel: SettingsViewModel = hiltViewModel(rootEntry)
             val state = viewModel.state.collectAsStateWithLifecycle().value
             InboxScreen(
                 state = state,
@@ -51,6 +55,10 @@ fun MainNavigation(
                         is InboxViewModel.Action.OpenVip -> navController.navigate(Destinations.VIP)
                         is InboxViewModel.Action.OpenMessage ->
                             navController.navigate("${Destinations.MESSAGE_DETAIL}/${action.messageId}")
+                        InboxViewModel.Action.CreateFirstAccount -> {
+                            settingsViewModel.startCreateAccount()
+                            navController.navigate(Destinations.ACCOUNT_EDIT)
+                        }
                         InboxViewModel.Action.NavigateBack -> navController.navigateUp()
                         else -> Unit
                     }
@@ -80,7 +88,7 @@ fun MainNavigation(
         }
 
         composable(Destinations.SETTINGS) {
-            val viewModel: SettingsViewModel = hiltViewModel()
+            val viewModel: SettingsViewModel = hiltViewModel(rootEntry)
             val state = viewModel.state.collectAsStateWithLifecycle().value
             SettingsScreen(
                 state = state,
@@ -97,10 +105,7 @@ fun MainNavigation(
         }
 
         composable(Destinations.ACCOUNT_EDIT) {
-            val parentEntry = remember(navController) {
-                navController.getBackStackEntry(Destinations.SETTINGS)
-            }
-            val viewModel: SettingsViewModel = hiltViewModel(parentEntry)
+            val viewModel: SettingsViewModel = hiltViewModel(rootEntry)
             val settingsState = viewModel.state.collectAsStateWithLifecycle().value
             AccountEditScreen(
                 state = settingsState.accountEditorState,

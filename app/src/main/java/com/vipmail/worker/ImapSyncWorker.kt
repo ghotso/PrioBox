@@ -1,13 +1,13 @@
-package com.vipmail.worker
+package com.priobox.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.vipmail.data.repository.AccountRepository
-import com.vipmail.data.repository.MailRepository
-import com.vipmail.domain.usecase.FetchEmailsUseCase
-import com.vipmail.utils.NotificationHelper
+import com.priobox.data.repository.AccountRepository
+import com.priobox.data.repository.MailRepository
+import com.priobox.domain.usecase.FetchEmailsUseCase
+import com.priobox.utils.NotificationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package com.vipmail.data.model
+package com.priobox.data.model
 
 enum class MailSecurity(val displayName: String) {
     SSL_TLS("SSL/TLS"),

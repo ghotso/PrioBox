@@ -1,6 +1,6 @@
 # 📄 Product Requirements Document (PRD)
 
-**Project Title:** VIPMail – Minimalist Multi-Account Email Client
+**Project Title:** PrioBox – Minimalist Multi-Account Email Client
 **Platform:** Android (target SDK 34+)
 **Development Environment:** Cursor (with Gradle & Android SDK)
 **Language:** Kotlin
@@ -110,7 +110,7 @@ Focus on **simplicity, privacy, and clarity** — no visual clutter or unnecessa
 Pattern: **MVVM + Repository + Room + WorkManager**
 
 ```
-com.vipmail/
+com.priobox/
 │
 ├── data/
 │   ├── db/
@@ -191,7 +191,7 @@ com.vipmail/
 
 1. **Initialize project in Cursor**
 
-   * Kotlin + Compose template (`com.vipmail`)
+   * Kotlin + Compose template (`com.priobox`)
    * Add dependencies manually in `build.gradle.kts`
 2. **Write code and structure using Cursor AI assistance**
 

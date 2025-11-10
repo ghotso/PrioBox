@@ -1,6 +1,6 @@
-package com.vipmail.domain.usecase
+package com.priobox.domain.usecase
 
-import com.vipmail.data.repository.MailRepository
+import com.priobox.data.repository.MailRepository
 import javax.inject.Inject
 
 class ToggleVipUseCase @Inject constructor(

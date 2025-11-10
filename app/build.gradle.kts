@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.vipmail"
+    namespace = "com.priobox"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.vipmail"
+        applicationId = "com.priobox"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

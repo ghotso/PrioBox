@@ -1,11 +1,11 @@
-package com.vipmail.di
+package com.priobox.di
 
 import android.content.Context
 import androidx.room.Room
-import com.vipmail.data.db.AppDatabase
-import com.vipmail.data.db.dao.EmailAccountDao
-import com.vipmail.data.db.dao.EmailMessageDao
-import com.vipmail.data.db.dao.VipSenderDao
+import com.priobox.data.db.AppDatabase
+import com.priobox.data.db.dao.EmailAccountDao
+import com.priobox.data.db.dao.EmailMessageDao
+import com.priobox.data.db.dao.VipSenderDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +20,7 @@ object DataModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "vipmail.db")
+        Room.databaseBuilder(context, AppDatabase::class.java, "priobox.db")
             .fallbackToDestructiveMigration()
             .build()
 

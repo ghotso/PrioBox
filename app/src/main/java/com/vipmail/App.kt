@@ -1,4 +1,4 @@
-package com.vipmail
+package com.priobox
 
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory

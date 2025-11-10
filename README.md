@@ -1,6 +1,6 @@
-# VIPMail – Minimalist Multi-Account Email Client
+# PrioBox – Minimalist Multi-Account Email Client
 
-VIPMail is an Android email client designed around clarity and focus. It supports multiple IMAP accounts, VIP-only notifications, and a minimalist Jetpack Compose interface. The feature set and architectural goals are driven by the accompanying [PRD](PRD/PRD.md).
+PrioBox is an Android email client designed around clarity and focus. It supports multiple IMAP accounts, VIP-only notifications, and a minimalist Jetpack Compose interface. The feature set and architectural goals are driven by the accompanying [PRD](PRD/PRD.md).
 
 ## Project Highlights
 
@@ -34,7 +34,7 @@ VIPMail is an Android email client designed around clarity and focus. It support
 
 ```
 app/
-├── src/main/java/com/vipmail/
+├── src/main/java/com/priobox/
 │   ├── App.kt
 │   ├── data/
 │   ├── domain/

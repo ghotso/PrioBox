@@ -1,4 +1,4 @@
-package com.vipmail.data.repository
+package com.priobox.data.repository
 
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences

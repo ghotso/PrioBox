@@ -1,11 +1,11 @@
-package com.vipmail.ui.compose
+package com.priobox.ui.compose
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.repository.AccountRepository
-import com.vipmail.domain.usecase.SendEmailUseCase
-import com.vipmail.utils.toEmailList
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.repository.AccountRepository
+import com.priobox.domain.usecase.SendEmailUseCase
+import com.priobox.utils.toEmailList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

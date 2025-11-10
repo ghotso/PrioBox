@@ -1,10 +1,10 @@
-package com.vipmail.ui.inbox
+package com.priobox.ui.inbox
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vipmail.data.model.EmailMessage
-import com.vipmail.data.repository.MailRepository
+import com.priobox.data.model.EmailMessage
+import com.priobox.data.repository.MailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

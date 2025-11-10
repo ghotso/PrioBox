@@ -1,4 +1,4 @@
-package com.vipmail.utils
+package com.priobox.utils
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,8 +6,8 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.vipmail.R
-import com.vipmail.data.model.EmailMessage
+import com.priobox.R
+import com.priobox.data.model.EmailMessage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

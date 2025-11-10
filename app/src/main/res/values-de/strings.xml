@@ -1,0 +1,83 @@
+<resources>
+    <string name="app_name">PrioBox</string>
+
+    <string name="inbox_title">Posteingang</string>
+    <string name="inbox_vip_contacts">VIP-Kontakte</string>
+    <string name="inbox_syncing">Posteingang wird synchronisiert&#8230;</string>
+    <string name="inbox_no_messages">Keine Nachrichten vorhanden.</string>
+    <string name="inbox_empty_title">Füge dein erstes Konto hinzu</string>
+    <string name="inbox_empty_message">Lege ein E-Mail-Konto an, um VIP-Nachrichten zu empfangen.</string>
+    <string name="inbox_empty_add_account">Konto hinzufügen</string>
+
+    <string name="compose_title">Verfassen</string>
+    <string name="compose_from">Von</string>
+    <string name="compose_to">An</string>
+    <string name="compose_subject">Betreff</string>
+    <string name="compose_body">Nachricht</string>
+    <string name="compose_send">Senden</string>
+    <string name="compose_sending">Senden&#8230;</string>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_accounts">Konten</string>
+    <string name="settings_add_account">Konto hinzufügen</string>
+    <string name="settings_edit">Bearbeiten</string>
+    <string name="settings_account_imap_summary">IMAP: %1$s:%2$s (%3$s)</string>
+    <string name="settings_account_smtp_summary">SMTP: %1$s:%2$s (%3$s)</string>
+    <string name="account_add_title">Konto hinzufügen</string>
+    <string name="account_edit_title">Konto bearbeiten</string>
+
+    <string name="account_display_name">Anzeigename</string>
+    <string name="account_email">E-Mail-Adresse</string>
+    <string name="account_imap_settings">IMAP-Einstellungen</string>
+    <string name="account_imap_server">IMAP-Server</string>
+    <string name="account_imap_port">IMAP-Port</string>
+    <string name="account_imap_security">IMAP-Sicherheit</string>
+    <string name="account_smtp_settings">SMTP-Einstellungen</string>
+    <string name="account_smtp_server">SMTP-Server</string>
+    <string name="account_smtp_port">SMTP-Port</string>
+    <string name="account_smtp_security">SMTP-Sicherheit</string>
+    <string name="account_username">Benutzername</string>
+    <string name="account_password">Passwort</string>
+    <string name="account_password_hint">Leer lassen, um das vorhandene Passwort zu behalten</string>
+    <string name="account_signature_section">Signatur</string>
+    <string name="account_enable_signature">Signatur aktivieren</string>
+    <string name="account_signature_text">Signaturtext</string>
+    <string name="account_save">Speichern</string>
+    <string name="account_test_imap">IMAP testen</string>
+    <string name="account_test_smtp">SMTP testen</string>
+    <string name="account_testing_imap">IMAP-Test läuft&#8230;</string>
+    <string name="account_testing_smtp">SMTP-Test läuft&#8230;</string>
+    <string name="account_test_imap_success">IMAP-Verbindung erfolgreich</string>
+    <string name="account_test_imap_error">IMAP-Verbindung fehlgeschlagen</string>
+    <string name="account_test_smtp_success">SMTP-Verbindung erfolgreich</string>
+    <string name="account_test_smtp_error">SMTP-Verbindung fehlgeschlagen</string>
+    <string name="account_test_password_required_imap">Für den IMAP-Test ist ein Passwort erforderlich.</string>
+    <string name="account_test_password_required_smtp">Für den SMTP-Test ist ein Passwort erforderlich.</string>
+
+    <string name="security_ssl_tls">SSL/TLS</string>
+    <string name="security_starttls">STARTTLS</string>
+    <string name="security_none">Keine</string>
+
+    <string name="vip_title">VIP-Kontakte</string>
+    <string name="vip_add_button">VIP hinzufügen</string>
+    <string name="vip_email_placeholder">VIP-E-Mail-Adresse</string>
+    <string name="vip_selected_label">Ausgewählt</string>
+    <string name="vip_remove">VIP entfernen</string>
+    <string name="vip_account_label">Konto</string>
+    <string name="vip_no_accounts">Keine E-Mail-Konten konfiguriert.</string>
+
+    <string name="message_loading">Nachricht wird geladen&#8230;</string>
+    <string name="message_error_missing">Nachricht nicht gefunden.</string>
+    <string name="message_from">Von: %1$s</string>
+    <string name="message_received">Empfangen: %1$s</string>
+
+    <string name="message_action_toggle_vip">VIP umschalten</string>
+
+    <string name="content_back">Zurück</string>
+    <string name="content_accounts_menu">Konto wechseln</string>
+    <string name="content_refresh">Aktualisieren</string>
+    <string name="content_compose">Verfassen</string>
+    <string name="badge_vip">VIP</string>
+    <string name="content_expand_dropdown">%1$s auswählen</string>
+</resources>
+

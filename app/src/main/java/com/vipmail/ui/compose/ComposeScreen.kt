@@ -1,4 +1,4 @@
-package com.vipmail.ui.compose
+package com.priobox.ui.compose
 
 import androidx.activity.compose.BackHandler
 
@@ -35,7 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import com.vipmail.data.model.EmailAccount
+import androidx.compose.ui.res.stringResource
+import com.priobox.data.model.EmailAccount
+import com.priobox.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,10 +63,13 @@ fun ComposeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Compose") },
+                title = { Text(stringResource(R.string.compose_title)) },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.content_back)
+                        )
                     }
                 },
                 actions = {
@@ -72,7 +77,10 @@ fun ComposeScreen(
                         onClick = onSend,
                         enabled = !state.isSending
                     ) {
-                        Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = "Send")
+                        Icon(
+                            Icons.AutoMirrored.Outlined.Send,
+                            contentDescription = stringResource(R.string.compose_send)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()
@@ -90,7 +98,10 @@ fun ComposeScreen(
         ) {
             state.selectedAccount?.let { account ->
                 Column {
-                    Text("From", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        stringResource(R.string.compose_from),
+                        style = MaterialTheme.typography.labelSmall
+                    )
                     OutlinedButton(onClick = { accountMenuExpanded.value = true }) {
                         Text(account.emailAddress)
                     }
@@ -115,7 +126,7 @@ fun ComposeScreen(
                 value = state.to,
                 onValueChange = onUpdateTo,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("To") },
+                label = { Text(stringResource(R.string.compose_to)) },
                 placeholder = { Text("recipient@example.com") },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     capitalization = KeyboardCapitalization.None
@@ -126,7 +137,7 @@ fun ComposeScreen(
                 value = state.subject,
                 onValueChange = onUpdateSubject,
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Subject") }
+                label = { Text(stringResource(R.string.compose_subject)) }
             )
 
             OutlinedTextField(
@@ -135,7 +146,7 @@ fun ComposeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                label = { Text("Message") },
+                label = { Text(stringResource(R.string.compose_body)) },
                 minLines = 8
             )
 
@@ -144,7 +155,13 @@ fun ComposeScreen(
                 enabled = !state.isSending,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (state.isSending) "Sending…" else "Send")
+                Text(
+                    if (state.isSending) {
+                        stringResource(R.string.compose_sending)
+                    } else {
+                        stringResource(R.string.compose_send)
+                    }
+                )
             }
         }
     }

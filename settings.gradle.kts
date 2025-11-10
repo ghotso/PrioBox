@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "VIPMail"
+rootProject.name = "PrioBox"
 include(":app")
 

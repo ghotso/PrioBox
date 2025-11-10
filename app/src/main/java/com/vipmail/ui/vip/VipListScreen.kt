@@ -1,4 +1,4 @@
-package com.vipmail.ui.vip
+package com.priobox.ui.vip
 
 import androidx.activity.compose.BackHandler
 
@@ -28,9 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.VipSender
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.VipSender
+import com.priobox.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,10 +51,13 @@ fun VipListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("VIP Contacts") },
+                title = { Text(stringResource(R.string.vip_title)) },
                 navigationIcon = {
                     IconButton(onClick = { onAction(VipViewModel.Action.NavigateBack) }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.content_back)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()
@@ -67,7 +72,10 @@ fun VipListScreen(
         ) {
             state.selectedAccount?.let { selected ->
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Account", style = MaterialTheme.typography.labelSmall)
+                    Text(
+                        stringResource(R.string.vip_account_label),
+                        style = MaterialTheme.typography.labelSmall
+                    )
                     OutlinedButton(onClick = { accountMenuExpanded.value = true }) {
                         Text("${selected.displayName} (${selected.emailAddress})")
                     }
@@ -86,12 +94,12 @@ fun VipListScreen(
                         }
                     }
                 }
-            } ?: Text("No email accounts configured.")
+            } ?: Text(stringResource(R.string.vip_no_accounts))
 
             OutlinedTextField(
                 value = state.newVipEmail,
                 onValueChange = onNewVipChange,
-                label = { Text("VIP email address") },
+                label = { Text(stringResource(R.string.vip_email_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = { Icon(Icons.Outlined.Person, contentDescription = null) }
             )
@@ -100,7 +108,7 @@ fun VipListScreen(
                 onClick = onAddVip,
                 enabled = state.selectedAccount != null
             ) {
-                Text("Add VIP")
+                Text(stringResource(R.string.vip_add_button))
             }
 
             state.vipSenders.forEach { vip ->
@@ -112,7 +120,10 @@ fun VipListScreen(
                 ) {
                     Text(vip.emailAddress)
                     IconButton(onClick = { onRemoveVip(vip) }) {
-                        Icon(Icons.Outlined.Delete, contentDescription = "Remove VIP")
+                        Icon(
+                            Icons.Outlined.Delete,
+                            contentDescription = stringResource(R.string.vip_remove)
+                        )
                     }
                 }
             }

@@ -1,14 +1,14 @@
-package com.vipmail.data.db
+package com.priobox.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.vipmail.data.db.dao.EmailAccountDao
-import com.vipmail.data.db.dao.EmailMessageDao
-import com.vipmail.data.db.dao.VipSenderDao
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.EmailMessage
-import com.vipmail.data.model.VipSender
+import com.priobox.data.db.dao.EmailAccountDao
+import com.priobox.data.db.dao.EmailMessageDao
+import com.priobox.data.db.dao.VipSenderDao
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailMessage
+import com.priobox.data.model.VipSender
 
 @Database(
     entities = [

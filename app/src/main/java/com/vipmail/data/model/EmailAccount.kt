@@ -1,8 +1,8 @@
-package com.vipmail.data.model
+package com.priobox.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.vipmail.data.model.MailSecurity
+import com.priobox.data.model.MailSecurity
 
 @Entity(tableName = "email_accounts")
 data class EmailAccount(

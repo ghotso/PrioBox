@@ -1,12 +1,12 @@
-package com.vipmail.data.repository
+package com.priobox.data.repository
 
-import com.vipmail.data.db.dao.EmailMessageDao
-import com.vipmail.data.db.dao.VipSenderDao
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.EmailMessage
-import com.vipmail.data.model.VipSender
-import com.vipmail.data.network.ImapService
-import com.vipmail.data.network.SmtpService
+import com.priobox.data.db.dao.EmailMessageDao
+import com.priobox.data.db.dao.VipSenderDao
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailMessage
+import com.priobox.data.model.VipSender
+import com.priobox.data.network.ImapService
+import com.priobox.data.network.SmtpService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

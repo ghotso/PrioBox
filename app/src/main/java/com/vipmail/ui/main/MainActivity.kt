@@ -1,4 +1,4 @@
-package com.vipmail.ui.main
+package com.priobox.ui.main
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.vipmail.ui.theme.VIPMailTheme
-import com.vipmail.worker.ImapSyncWorker
+import com.priobox.ui.theme.PrioBoxTheme
+import com.priobox.worker.ImapSyncWorker
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         scheduleSync()
         requestNotificationPermission()
         setContent {
-            VIPMailTheme {
+            PrioBoxTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MainNavigation()
                 }

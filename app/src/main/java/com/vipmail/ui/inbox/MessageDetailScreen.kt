@@ -1,4 +1,4 @@
-package com.vipmail.ui.inbox
+package com.priobox.ui.inbox
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,8 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.vipmail.data.model.EmailMessage
+import com.priobox.R
+import com.priobox.data.model.EmailMessage
+import java.text.DateFormat
+import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,10 +38,15 @@ fun MessageDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.message?.subject ?: "Message") },
+                title = {
+                    Text(state.message?.subject ?: stringResource(R.string.message_loading))
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.content_back)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()
@@ -67,7 +76,10 @@ private fun LoadingState(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator()
-        Text("Loading message…", modifier = Modifier.padding(top = 16.dp))
+        Text(
+            stringResource(R.string.message_loading),
+            modifier = Modifier.padding(top = 16.dp)
+        )
     }
 }
 
@@ -80,13 +92,20 @@ private fun ErrorState(message: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = message, color = MaterialTheme.colorScheme.error)
+        Text(
+            text = message.ifBlank { stringResource(R.string.message_error_missing) },
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }
 
 @Composable
 private fun MessageContent(message: EmailMessage, modifier: Modifier = Modifier) {
     val scrollState = rememberScrollState()
+    val formattedDate = remember(message.timestamp) {
+        DateFormat.getDateTimeInstance().format(Date(message.timestamp))
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -99,11 +118,11 @@ private fun MessageContent(message: EmailMessage, modifier: Modifier = Modifier)
             style = MaterialTheme.typography.headlineSmall
         )
         Text(
-            text = "From: ${message.sender}",
+            text = stringResource(R.string.message_from, message.sender),
             style = MaterialTheme.typography.bodyMedium
         )
         Text(
-            text = "Received: ${message.timestamp}",
+            text = stringResource(R.string.message_received, formattedDate),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

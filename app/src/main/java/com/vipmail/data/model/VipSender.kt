@@ -1,4 +1,4 @@
-package com.vipmail.data.model
+package com.priobox.data.model
 
 import androidx.room.Entity
 import androidx.room.Index

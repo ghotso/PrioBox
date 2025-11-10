@@ -13,12 +13,12 @@
         android:icon="@android:drawable/ic_dialog_email"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VIPMail">
+        android:theme="@style/Theme.PrioBox">
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.VIPMail">
+            android:theme="@style/Theme.PrioBox">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

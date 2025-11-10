@@ -1,4 +1,4 @@
-package com.vipmail.ui.inbox
+package com.priobox.ui.inbox
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.DropdownMenu
@@ -40,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.EmailMessage
+import androidx.compose.ui.res.stringResource
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailMessage
+import com.priobox.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +61,8 @@ fun InboxScreen(
                 title = {
                     Column {
                         Text(
-                            text = state.selectedAccount?.displayName ?: "Inbox",
+                            text = state.selectedAccount?.displayName
+                                ?: stringResource(R.string.inbox_title),
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
@@ -70,13 +74,19 @@ fun InboxScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = { onAction(InboxViewModel.Action.NavigateBack) }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.content_back)
+                        )
                     }
                 },
                 actions = {
                     if (state.accounts.size > 1) {
                         IconButton(onClick = { accountsExpanded.value = true }) {
-                            Icon(Icons.Outlined.MoreVert, contentDescription = "Accounts")
+                            Icon(
+                                Icons.Outlined.MoreVert,
+                                contentDescription = stringResource(R.string.content_accounts_menu)
+                            )
                         }
                         DropdownMenu(
                             expanded = accountsExpanded.value,
@@ -97,7 +107,10 @@ fun InboxScreen(
                     IconButton(
                         onClick = { onAction(InboxViewModel.Action.OpenSettings) }
                     ) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "Settings")
+                        Icon(
+                            Icons.Outlined.Settings,
+                            contentDescription = stringResource(R.string.settings_title)
+                        )
                     }
 
                     IconButton(
@@ -107,7 +120,10 @@ fun InboxScreen(
                             }
                         }
                     ) {
-                        Icon(Icons.Outlined.Refresh, contentDescription = "Refresh")
+                        Icon(
+                            Icons.Outlined.Refresh,
+                            contentDescription = stringResource(R.string.content_refresh)
+                        )
                     }
                 },
                 scrollBehavior = appBarScrollBehavior
@@ -115,7 +131,10 @@ fun InboxScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { onAction(InboxViewModel.Action.OpenCompose) }) {
-                Icon(Icons.Outlined.Add, contentDescription = "Compose")
+                Icon(
+                    Icons.Outlined.Add,
+                    contentDescription = stringResource(R.string.content_compose)
+                )
             }
         }
     ) { innerPadding ->
@@ -127,7 +146,7 @@ fun InboxScreen(
             state.selectedAccount?.let { account ->
                 AssistChip(
                     onClick = { onAction(InboxViewModel.Action.OpenVip(account.id)) },
-                    label = { Text("VIP Contacts") },
+                    label = { Text(stringResource(R.string.inbox_vip_contacts)) },
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
@@ -142,6 +161,13 @@ fun InboxScreen(
                 )
             }
 
+            if (state.accounts.isEmpty()) {
+                EmptyAccountsState(
+                    onAddAccount = { onAction(InboxViewModel.Action.CreateFirstAccount) }
+                )
+                return@Scaffold
+            }
+
             when {
                 state.isLoading -> {
                     Column(
@@ -151,7 +177,7 @@ fun InboxScreen(
                     ) {
                         CircularProgressIndicator()
                         Text(
-                            text = "Syncing inbox…",
+                            text = stringResource(R.string.inbox_syncing),
                             modifier = Modifier.padding(top = 16.dp)
                         )
                     }
@@ -163,7 +189,7 @@ fun InboxScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("No messages yet.")
+                        Text(stringResource(R.string.inbox_no_messages))
                     }
                 }
 
@@ -191,6 +217,36 @@ fun InboxScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun EmptyAccountsState(
+    onAddAccount: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.inbox_empty_title),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Text(
+            text = stringResource(R.string.inbox_empty_message),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 12.dp)
+        )
+        Button(
+            onClick = onAddAccount,
+            modifier = Modifier.padding(top = 24.dp)
+        ) {
+            Text(stringResource(R.string.inbox_empty_add_account))
         }
     }
 }
@@ -224,7 +280,7 @@ private fun EmailRow(
                 if (message.isVip) {
                     AssistChip(
                         onClick = { },
-                        label = { Text("VIP") }
+                        label = { Text(stringResource(R.string.badge_vip)) }
                     )
                 }
             }
@@ -248,7 +304,7 @@ private fun EmailRow(
         IconButton(onClick = onToggleVip) {
             Icon(
                 imageVector = if (message.isVip) Icons.Outlined.Star else Icons.Outlined.StarBorder,
-                contentDescription = "VIP"
+                contentDescription = stringResource(R.string.message_action_toggle_vip)
             )
         }
     }

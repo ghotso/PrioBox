@@ -1,12 +1,12 @@
-package com.vipmail.ui.inbox
+package com.priobox.ui.inbox
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.EmailMessage
-import com.vipmail.data.repository.AccountRepository
-import com.vipmail.data.repository.MailRepository
-import com.vipmail.domain.usecase.FetchEmailsUseCase
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailMessage
+import com.priobox.data.repository.AccountRepository
+import com.priobox.data.repository.MailRepository
+import com.priobox.domain.usecase.FetchEmailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +35,7 @@ class InboxViewModel @Inject constructor(
         data class Refresh(val account: EmailAccount) : Action
         data class ToggleVip(val accountId: Long, val email: String) : Action
         data class OpenMessage(val messageId: Long) : Action
+        data object CreateFirstAccount : Action
     }
 
     data class State(

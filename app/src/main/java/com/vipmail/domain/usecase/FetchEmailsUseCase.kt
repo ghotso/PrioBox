@@ -1,7 +1,7 @@
-package com.vipmail.domain.usecase
+package com.priobox.domain.usecase
 
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.repository.MailRepository
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.repository.MailRepository
 import javax.inject.Inject
 
 class FetchEmailsUseCase @Inject constructor(

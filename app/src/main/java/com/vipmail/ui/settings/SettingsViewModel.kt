@@ -1,11 +1,12 @@
-package com.vipmail.ui.settings
+package com.priobox.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.MailSecurity
-import com.vipmail.data.repository.AccountRepository
-import com.vipmail.data.repository.MailRepository
+import com.priobox.R
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.MailSecurity
+import com.priobox.data.repository.AccountRepository
+import com.priobox.data.repository.MailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -39,7 +40,8 @@ class SettingsViewModel @Inject constructor(
 
     data class ConnectionTestState(
         val isLoading: Boolean = false,
-        val message: String? = null,
+        val success: Boolean = false,
+        val errorResId: Int? = null,
         val error: String? = null
     )
 
@@ -128,7 +130,9 @@ class SettingsViewModel @Inject constructor(
             val editor = editorState.value
             val password = resolvePassword(editor)
             if (password.isNullOrBlank()) {
-                imapTestState.value = ConnectionTestState(error = "Password is required for IMAP test")
+                imapTestState.value = ConnectionTestState(
+                    errorResId = R.string.account_test_password_required_imap
+                )
                 return@launch
             }
 
@@ -136,8 +140,8 @@ class SettingsViewModel @Inject constructor(
             val account = editor.toEmailAccount()
             val result = mailRepository.testImapConnection(account, password)
             imapTestState.value = result.fold(
-                onSuccess = { ConnectionTestState(message = "IMAP connection successful") },
-                onFailure = { ConnectionTestState(error = it.localizedMessage ?: "IMAP connection failed") }
+                onSuccess = { ConnectionTestState(success = true) },
+                onFailure = { ConnectionTestState(error = it.localizedMessage) }
             )
         }
     }
@@ -147,7 +151,9 @@ class SettingsViewModel @Inject constructor(
             val editor = editorState.value
             val password = resolvePassword(editor)
             if (password.isNullOrBlank()) {
-                smtpTestState.value = ConnectionTestState(error = "Password is required for SMTP test")
+                smtpTestState.value = ConnectionTestState(
+                    errorResId = R.string.account_test_password_required_smtp
+                )
                 return@launch
             }
 
@@ -155,8 +161,8 @@ class SettingsViewModel @Inject constructor(
             val account = editor.toEmailAccount()
             val result = mailRepository.testSmtpConnection(account, password)
             smtpTestState.value = result.fold(
-                onSuccess = { ConnectionTestState(message = "SMTP connection successful") },
-                onFailure = { ConnectionTestState(error = it.localizedMessage ?: "SMTP connection failed") }
+                onSuccess = { ConnectionTestState(success = true) },
+                onFailure = { ConnectionTestState(error = it.localizedMessage) }
             )
         }
     }

@@ -1,7 +1,7 @@
-package com.vipmail.data.repository
+package com.priobox.data.repository
 
-import com.vipmail.data.db.dao.EmailAccountDao
-import com.vipmail.data.model.EmailAccount
+import com.priobox.data.db.dao.EmailAccountDao
+import com.priobox.data.model.EmailAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

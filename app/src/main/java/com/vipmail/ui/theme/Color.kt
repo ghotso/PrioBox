@@ -1,4 +1,4 @@
-package com.vipmail.ui.theme
+package com.priobox.ui.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme

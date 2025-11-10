@@ -1,7 +1,7 @@
-package com.vipmail.data.db
+package com.priobox.data.db
 
 import androidx.room.TypeConverter
-import com.vipmail.data.model.MailSecurity
+import com.priobox.data.model.MailSecurity
 import java.util.Date
 
 class DatabaseConverters {

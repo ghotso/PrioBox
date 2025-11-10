@@ -1,4 +1,4 @@
-package com.vipmail.data.db.dao
+package com.priobox.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.vipmail.data.model.EmailAccount
+import com.priobox.data.model.EmailAccount
 import kotlinx.coroutines.flow.Flow
 
 @Dao

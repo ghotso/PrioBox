@@ -1,4 +1,4 @@
-package com.vipmail.utils
+package com.priobox.utils
 
 fun String?.toEmailList(): List<String> =
     this.orEmpty()

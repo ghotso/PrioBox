@@ -1,4 +1,4 @@
-package com.vipmail.ui.settings
+package com.priobox.ui.settings
 
 import androidx.activity.compose.BackHandler
 
@@ -35,10 +35,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.vipmail.data.model.MailSecurity
+import com.priobox.R
+import com.priobox.data.model.MailSecurity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,11 +78,20 @@ fun AccountEditScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(if (formState.id == null) "Add Account" else "Edit Account")
+                    Text(
+                        if (formState.id == null) {
+                            stringResource(R.string.account_add_title)
+                        } else {
+                            stringResource(R.string.account_edit_title)
+                        }
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.content_back)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()
@@ -98,23 +109,23 @@ fun AccountEditScreen(
             OutlinedTextField(
                 value = formState.displayName,
                 onValueChange = { update { copy(displayName = it) } },
-                label = { Text("Display Name") },
+                label = { Text(stringResource(R.string.account_display_name)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = formState.emailAddress,
                 onValueChange = { update { copy(emailAddress = it) } },
-                label = { Text("Email Address") },
+                label = { Text(stringResource(R.string.account_email)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text("IMAP Settings")
+            Text(stringResource(R.string.account_imap_settings))
 
             OutlinedTextField(
                 value = formState.imapServer,
                 onValueChange = { update { copy(imapServer = it) } },
-                label = { Text("IMAP Server") },
+                label = { Text(stringResource(R.string.account_imap_server)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -125,24 +136,24 @@ fun AccountEditScreen(
                 OutlinedTextField(
                     value = formState.imapPort,
                     onValueChange = { update { copy(imapPort = it) } },
-                    label = { Text("IMAP Port") },
+                    label = { Text(stringResource(R.string.account_imap_port)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.weight(1f)
                 )
                 SecurityDropdown(
-                    label = "IMAP Security",
+                    label = stringResource(R.string.account_imap_security),
                     value = formState.imapSecurity,
                     onValueSelected = { update { copy(imapSecurity = it) } },
                     modifier = Modifier.weight(1f)
                 )
             }
 
-            Text("SMTP Settings")
+            Text(stringResource(R.string.account_smtp_settings))
 
             OutlinedTextField(
                 value = formState.smtpServer,
                 onValueChange = { update { copy(smtpServer = it) } },
-                label = { Text("SMTP Server") },
+                label = { Text(stringResource(R.string.account_smtp_server)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -153,12 +164,12 @@ fun AccountEditScreen(
                 OutlinedTextField(
                     value = formState.smtpPort,
                     onValueChange = { update { copy(smtpPort = it) } },
-                    label = { Text("SMTP Port") },
+                    label = { Text(stringResource(R.string.account_smtp_port)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.weight(1f)
                 )
                 SecurityDropdown(
-                    label = "SMTP Security",
+                    label = stringResource(R.string.account_smtp_security),
                     value = formState.smtpSecurity,
                     onValueSelected = { update { copy(smtpSecurity = it) } },
                     modifier = Modifier.weight(1f)
@@ -168,20 +179,20 @@ fun AccountEditScreen(
             OutlinedTextField(
                 value = formState.username,
                 onValueChange = { update { copy(username = it) } },
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.account_username)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = formState.password,
                 onValueChange = { update { copy(password = it) } },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.account_password)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = PasswordVisualTransformation(),
                 singleLine = true,
                 placeholder = {
                     if (!isNewAccount) {
-                        Text("Leave blank to keep existing password")
+                        Text(stringResource(R.string.account_password_hint))
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -199,8 +210,8 @@ fun AccountEditScreen(
                     ) {
                         Text(
                             when {
-                                imapTestState.isLoading -> "Testing IMAP…"
-                                else -> "Test IMAP"
+                                imapTestState.isLoading -> stringResource(R.string.account_testing_imap)
+                                else -> stringResource(R.string.account_test_imap)
                             }
                         )
                     }
@@ -210,47 +221,59 @@ fun AccountEditScreen(
                     ) {
                         Text(
                             when {
-                                smtpTestState.isLoading -> "Testing SMTP…"
-                                else -> "Test SMTP"
+                                smtpTestState.isLoading -> stringResource(R.string.account_testing_smtp)
+                                else -> stringResource(R.string.account_test_smtp)
                             }
                         )
                     }
                 }
 
-                imapTestState.message?.let {
+                if (imapTestState.success) {
                     Text(
-                        text = "IMAP: $it",
+                        text = stringResource(R.string.account_test_imap_success),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                imapTestState.error?.let {
+                imapTestState.errorResId?.let {
                     Text(
-                        text = "IMAP: $it",
+                        text = stringResource(it),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-                smtpTestState.message?.let {
+                imapTestState.error?.takeUnless { it.isNullOrBlank() }?.let {
                     Text(
-                        text = "SMTP: $it",
+                        text = it,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                if (smtpTestState.success) {
+                    Text(
+                        text = stringResource(R.string.account_test_smtp_success),
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-                smtpTestState.error?.let {
+                smtpTestState.errorResId?.let {
                     Text(
-                        text = "SMTP: $it",
+                        text = stringResource(it),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                smtpTestState.error?.takeUnless { it.isNullOrBlank() }?.let {
+                    Text(
+                        text = it,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
             }
 
-            Text("Signature")
+            Text(stringResource(R.string.account_signature_section))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Enable signature")
+                Text(stringResource(R.string.account_enable_signature))
                 Switch(
                     checked = formState.signatureEnabled,
                     onCheckedChange = { isEnabled -> update { copy(signatureEnabled = isEnabled) } }
@@ -260,7 +283,7 @@ fun AccountEditScreen(
             OutlinedTextField(
                 value = formState.signature,
                 onValueChange = { update { copy(signature = it) } },
-                label = { Text("Signature Text") },
+                label = { Text(stringResource(R.string.account_signature_text)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp),
@@ -275,7 +298,7 @@ fun AccountEditScreen(
                 enabled = isSaveEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save")
+                Text(stringResource(R.string.account_save))
             }
         }
     }
@@ -289,15 +312,23 @@ private fun SecurityDropdown(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val selectedText = when (value) {
+        MailSecurity.SSL_TLS -> stringResource(R.string.security_ssl_tls)
+        MailSecurity.STARTTLS -> stringResource(R.string.security_starttls)
+        MailSecurity.NONE -> stringResource(R.string.security_none)
+    }
     Column(modifier = modifier) {
         OutlinedTextField(
-            value = value.displayName,
+            value = selectedText,
             onValueChange = {},
             label = { Text(label) },
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { expanded = !expanded }) {
-                    Icon(Icons.Outlined.ArrowDropDown, contentDescription = "Select $label")
+                    Icon(
+                        Icons.Outlined.ArrowDropDown,
+                        contentDescription = stringResource(R.string.content_expand_dropdown, label)
+                    )
                 }
             },
             modifier = Modifier
@@ -310,7 +341,15 @@ private fun SecurityDropdown(
         ) {
             MailSecurity.values().forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option.displayName) },
+                    text = {
+                        Text(
+                            when (option) {
+                                MailSecurity.SSL_TLS -> stringResource(R.string.security_ssl_tls)
+                                MailSecurity.STARTTLS -> stringResource(R.string.security_starttls)
+                                MailSecurity.NONE -> stringResource(R.string.security_none)
+                            }
+                        )
+                    },
                     onClick = {
                         expanded = false
                         onValueSelected(option)

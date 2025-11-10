@@ -1,7 +1,7 @@
-package com.vipmail.data.network
+package com.priobox.data.network
 
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.EmailMessage
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailMessage
 import java.text.Normalizer
 import java.util.Date
 import javax.inject.Inject

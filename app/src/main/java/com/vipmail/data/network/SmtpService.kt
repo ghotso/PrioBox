@@ -1,8 +1,8 @@
-package com.vipmail.data.network
+package com.priobox.data.network
 
 import android.util.Log
-import com.vipmail.data.model.EmailAccount
-import com.vipmail.data.model.MailSecurity
+import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.MailSecurity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Properties
