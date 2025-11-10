@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Properties
 import javax.inject.Inject
+import javax.mail.Flags
 import javax.mail.Folder
 import javax.mail.Message
 import javax.mail.Session
@@ -90,6 +91,44 @@ class ImapService @Inject constructor(
             Log.e(TAG, "Failed to fetch folders", t)
             throw t
         } finally {
+            runCatching { store?.close() }
+        }
+    }
+
+    suspend fun updateMessageReadState(
+        account: EmailAccount,
+        password: String,
+        folderServerId: String,
+        uid: String,
+        isRead: Boolean
+    ) = withContext(Dispatchers.IO) {
+        val uidLong = uid.toLongOrNull()
+        if (uidLong == null) {
+            Log.w(TAG, "Skipping read-state update for non-numeric UID: $uid")
+            return@withContext
+        }
+        val session = Session.getInstance(createProperties(account), null)
+        var store: IMAPStore? = null
+        var folder: IMAPFolder? = null
+        try {
+            store = session.getStore(resolveProtocol(account)) as IMAPStore
+            store.connect(account.username, password)
+
+            folder = store.getFolder(folderServerId) as? IMAPFolder
+                ?: store.getFolder(EmailFolder.INBOX_SERVER_ID) as IMAPFolder
+            folder.open(IMAPFolder.READ_WRITE)
+
+            val message = folder.getMessageByUID(uidLong)
+            if (message == null) {
+                Log.w(TAG, "Message UID $uidLong not found in $folderServerId")
+                return@withContext
+            }
+            message.setFlag(Flags.Flag.SEEN, isRead)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Failed to update read state for UID $uid in $folderServerId", t)
+            throw t
+        } finally {
+            runCatching { folder?.close(false) }
             runCatching { store?.close() }
         }
     }

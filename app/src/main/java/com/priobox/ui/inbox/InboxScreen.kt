@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.MarkEmailRead
+import androidx.compose.material.icons.outlined.MarkEmailUnread
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
@@ -247,6 +249,9 @@ fun InboxScreen(
                             items(state.messages) { message ->
                                 EmailRow(
                                     message = message,
+                                    onToggleRead = { newState ->
+                                        onAction(InboxViewModel.Action.SetMessageRead(message.id, newState))
+                                    },
                                     onToggleVip = {
                                         state.selectedAccount?.let { account ->
                                             onAction(
@@ -304,6 +309,7 @@ private fun EmptyAccountsState(
 @Composable
 private fun EmailRow(
     message: EmailMessage,
+    onToggleRead: (Boolean) -> Unit,
     onToggleVip: () -> Unit,
     onOpenMessage: () -> Unit
 ) {
@@ -351,11 +357,25 @@ private fun EmailRow(
             )
         }
 
-        IconButton(onClick = onToggleVip) {
-            Icon(
-                imageVector = if (message.isVip) Icons.Outlined.Star else Icons.Outlined.StarBorder,
-                contentDescription = stringResource(R.string.message_action_toggle_vip)
-            )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { onToggleRead(!message.isRead) }) {
+                val isRead = message.isRead
+                Icon(
+                    imageVector = if (isRead) Icons.Outlined.MarkEmailUnread else Icons.Outlined.MarkEmailRead,
+                    contentDescription = stringResource(
+                        if (isRead) R.string.message_action_mark_unread else R.string.message_action_mark_read
+                    )
+                )
+            }
+            IconButton(onClick = onToggleVip) {
+                Icon(
+                    imageVector = if (message.isVip) Icons.Outlined.Star else Icons.Outlined.StarBorder,
+                    contentDescription = stringResource(R.string.message_action_toggle_vip)
+                )
+            }
         }
     }
 }

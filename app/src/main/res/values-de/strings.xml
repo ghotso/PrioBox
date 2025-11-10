@@ -3,7 +3,7 @@
 
     <string name="inbox_title">Posteingang</string>
     <string name="inbox_vip_contacts">VIP-Kontakte</string>
-    <string name="inbox_syncing">Posteingang wird synchronisiert&#8230;</string>
+    <string name="inbox_syncing">Ordner wird synchronisiert&#8230;</string>
     <string name="inbox_no_messages">Keine Nachrichten vorhanden.</string>
     <string name="inbox_empty_title">Füge dein erstes Konto hinzu</string>
     <string name="inbox_empty_message">Lege ein E-Mail-Konto an, um VIP-Nachrichten zu empfangen.</string>
@@ -16,6 +16,20 @@
     <string name="compose_body">Nachricht</string>
     <string name="compose_send">Senden</string>
     <string name="compose_sending">Senden&#8230;</string>
+    <string name="compose_toolbar_bold">Fett</string>
+    <string name="compose_toolbar_italic">Kursiv</string>
+    <string name="compose_toolbar_underline">Unterstreichen</string>
+    <string name="compose_toolbar_font_size">Schriftgröße</string>
+    <string name="compose_add_attachment">Anlage hinzufügen</string>
+    <string name="compose_insert_image">Bild einfügen</string>
+    <string name="compose_attachments">Anhänge</string>
+    <string name="compose_inline_indicator">Inline</string>
+    <string name="compose_remove_attachment">Anlage entfernen</string>
+    <string name="compose_attachment_error">Anlage konnte nicht hinzugefügt werden</string>
+    <string name="compose_default_attachment_name">Anlage</string>
+    <string name="compose_font_size_small">Klein</string>
+    <string name="compose_font_size_normal">Normal</string>
+    <string name="compose_font_size_large">Groß</string>
 
     <string name="settings_title">Einstellungen</string>
     <string name="settings_accounts">Konten</string>
@@ -72,6 +86,8 @@
     <string name="message_received">Empfangen: %1$s</string>
 
     <string name="message_action_toggle_vip">VIP umschalten</string>
+    <string name="message_action_mark_read">Als gelesen markieren</string>
+    <string name="message_action_mark_unread">Als ungelesen markieren</string>
 
     <string name="content_back">Zurück</string>
     <string name="content_accounts_menu">Konto wechseln</string>

@@ -1,6 +1,7 @@
 package com.priobox.domain.usecase
 
 import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailAttachment
 import com.priobox.data.repository.MailRepository
 import javax.inject.Inject
 
@@ -11,7 +12,8 @@ class SendEmailUseCase @Inject constructor(
         account: EmailAccount,
         to: List<String>,
         subject: String,
-        body: String
-    ) = mailRepository.sendEmail(account, to, subject, body)
+        bodyHtml: String,
+        attachments: List<EmailAttachment>
+    ) = mailRepository.sendEmail(account, to, subject, bodyHtml, attachments)
 }
 

@@ -38,6 +38,7 @@ class InboxViewModel @Inject constructor(
         data class ToggleVip(val accountId: Long, val email: String) : Action
         data class OpenMessage(val messageId: Long) : Action
         data class SelectFolder(val folderServerId: String) : Action
+        data class SetMessageRead(val messageId: Long, val isRead: Boolean) : Action
         data object CreateFirstAccount : Action
     }
 
@@ -223,6 +224,8 @@ class InboxViewModel @Inject constructor(
 
             is Action.OpenMessage -> Unit
 
+            is Action.SetMessageRead -> setMessageRead(action.messageId, action.isRead)
+
             else -> Unit
         }
     }
@@ -253,6 +256,12 @@ class InboxViewModel @Inject constructor(
     private fun toggleVip(accountId: Long, email: String) {
         viewModelScope.launch {
             runCatching { mailRepository.toggleVip(accountId, email) }
+        }
+    }
+
+    private fun setMessageRead(messageId: Long, isRead: Boolean) {
+        viewModelScope.launch {
+            runCatching { mailRepository.setMessageReadState(messageId, isRead) }
         }
     }
 }

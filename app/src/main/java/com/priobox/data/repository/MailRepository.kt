@@ -1,31 +1,42 @@
 package com.priobox.data.repository
 
+import android.content.Context
+import android.text.Html
+import android.util.Log
+import androidx.core.text.HtmlCompat
+import com.priobox.data.db.dao.EmailAccountDao
 import com.priobox.data.db.dao.EmailFolderDao
 import com.priobox.data.db.dao.EmailMessageDao
 import com.priobox.data.db.dao.VipSenderDao
 import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailAttachment
 import com.priobox.data.model.EmailFolder
 import com.priobox.data.model.EmailMessage
 import com.priobox.data.model.VipSender
 import com.priobox.data.network.ImapService
 import com.priobox.data.network.SmtpService
+import com.priobox.data.network.SmtpService.AttachmentPayload
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MailRepository @Inject constructor(
+    private val emailAccountDao: EmailAccountDao,
     private val emailMessageDao: EmailMessageDao,
     private val emailFolderDao: EmailFolderDao,
     private val vipSenderDao: VipSenderDao,
     private val imapService: ImapService,
     private val smtpService: SmtpService,
-    private val credentialStorage: CredentialStorage
+    private val credentialStorage: CredentialStorage,
+    @ApplicationContext private val context: Context
 ) {
 
     fun observeFolderMessages(accountId: Long, folderServerId: String): Flow<List<EmailMessage>> =
@@ -71,23 +82,60 @@ class MailRepository @Inject constructor(
         account: EmailAccount,
         to: List<String>,
         subject: String,
-        body: String
-    ) {
-        val finalBody = if (account.signatureEnabled && account.signature.isNotBlank()) {
+        bodyHtml: String,
+        attachments: List<EmailAttachment>
+    ) = withContext(Dispatchers.IO) {
+        val htmlWithSignature = if (account.signatureEnabled && account.signature.isNotBlank()) {
+            val escapedSignature = Html.escapeHtml(account.signature).replace(\"\\n\", \"<br/>\")
             buildString {
-                append(body.trimEnd())
-                appendLine()
-                appendLine()
-                append(account.signature)
+                append(bodyHtml.trimEnd())
+                append(\"<br/><br/>\")
+                append(escapedSignature)
             }
         } else {
-            body
+            bodyHtml
         }
 
         val password = credentialStorage.getPassword(account.id)
-            ?: throw IllegalStateException("Missing credentials for account ${account.emailAddress}")
+            ?: throw IllegalStateException(\"Missing credentials for account ${account.emailAddress}\")
 
-        smtpService.sendEmail(account, password, to, subject, finalBody)
+        val bodyText = HtmlCompat.fromHtml(htmlWithSignature, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+
+        val payloads = attachments.mapNotNull { attachment ->
+            val bytes = attachment.data ?: attachment.uri?.let { uri ->
+                try {
+                    context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                } catch (exception: IOException) {
+                    Log.e(TAG, \"Failed to read attachment ${attachment.displayName}\", exception)
+                    null
+                }
+            }
+
+            val contentBytes = bytes ?: run {
+                Log.w(TAG, \"Skipping attachment ${attachment.displayName}: no data available\")
+                null
+            }
+
+            contentBytes?.let {
+                AttachmentPayload(
+                    fileName = attachment.displayName,
+                    mimeType = attachment.mimeType,
+                    bytes = it,
+                    inline = attachment.inline,
+                    contentId = attachment.contentId
+                )
+            }
+        }
+
+        smtpService.sendEmail(
+            account = account,
+            password = password,
+            to = to,
+            subject = subject,
+            bodyHtml = htmlWithSignature,
+            bodyText = bodyText,
+            attachments = payloads
+        )
     }
 
     suspend fun toggleVip(accountId: Long, email: String): Boolean {
@@ -117,7 +165,23 @@ class MailRepository @Inject constructor(
     fun observeMessage(messageId: Long): Flow<EmailMessage?> =
         emailMessageDao.observeMessage(messageId)
 
-    suspend fun markMessageRead(messageId: Long) =
-        emailMessageDao.updateReadState(messageId, true)
+    suspend fun setMessageReadState(messageId: Long, isRead: Boolean) = withContext(Dispatchers.IO) {
+        val message = emailMessageDao.getMessage(messageId) ?: return@withContext
+        emailMessageDao.updateReadState(messageId, isRead)
+
+        runCatching {
+            val account = emailAccountDao.getAccount(message.accountId) ?: return@runCatching
+            val password = credentialStorage.getPassword(account.id) ?: return@runCatching
+            imapService.updateMessageReadState(account, password, message.folder, message.uid, isRead)
+        }.onFailure {
+            Log.e(TAG, "Failed to update remote read state for message $messageId", it)
+        }
+    }
+
+    suspend fun markMessageRead(messageId: Long) = setMessageReadState(messageId, true)
+
+    companion object {
+        private const val TAG = "MailRepository"
+    }
 }
 

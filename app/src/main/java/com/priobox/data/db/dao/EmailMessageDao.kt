@@ -42,6 +42,9 @@ interface EmailMessageDao {
     @Query("SELECT * FROM email_messages WHERE id = :id")
     fun observeMessage(id: Long): Flow<EmailMessage?>
 
+    @Query("SELECT * FROM email_messages WHERE id = :id")
+    suspend fun getMessage(id: Long): EmailMessage?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(messages: List<EmailMessage>)
 

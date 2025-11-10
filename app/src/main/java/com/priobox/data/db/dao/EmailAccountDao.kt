@@ -29,5 +29,8 @@ interface EmailAccountDao {
 
     @Query("SELECT * FROM email_accounts LIMIT 1")
     suspend fun getFirstAccount(): EmailAccount?
+
+    @Query("SELECT * FROM email_accounts WHERE id = :id LIMIT 1")
+    suspend fun getAccount(id: Long): EmailAccount?
 }
 

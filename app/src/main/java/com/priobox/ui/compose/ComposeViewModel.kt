@@ -3,6 +3,7 @@ package com.priobox.ui.compose
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.priobox.data.model.EmailAccount
+import com.priobox.data.model.EmailAttachment
 import com.priobox.data.repository.AccountRepository
 import com.priobox.domain.usecase.SendEmailUseCase
 import com.priobox.utils.toEmailList
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,7 +33,8 @@ class ComposeViewModel @Inject constructor(
         val selectedAccount: EmailAccount? = null,
         val to: String = "",
         val subject: String = "",
-        val body: String = "",
+        val bodyHtml: String = "",
+        val attachments: List<EmailAttachment> = emptyList(),
         val isSending: Boolean = false,
         val error: String? = null
     )
@@ -39,14 +42,16 @@ class ComposeViewModel @Inject constructor(
     private val selectedAccountId = MutableStateFlow<Long?>(null)
     private val to = MutableStateFlow("")
     private val subject = MutableStateFlow("")
-    private val body = MutableStateFlow("")
+    private val bodyHtml = MutableStateFlow("")
+    private val attachments = MutableStateFlow<List<EmailAttachment>>(emptyList())
     private val isSending = MutableStateFlow(false)
     private val error = MutableStateFlow<String?>(null)
 
     private data class FormState(
         val to: String,
         val subject: String,
-        val body: String,
+        val bodyHtml: String,
+        val attachments: List<EmailAttachment>,
         val isSending: Boolean,
         val error: String?
     )
@@ -54,14 +59,16 @@ class ComposeViewModel @Inject constructor(
     private val formState = combine(
         to,
         subject,
-        body,
+        bodyHtml,
+        attachments,
         isSending,
         error
-    ) { toValue, subjectValue, bodyValue, sending, errorValue ->
+    ) { toValue, subjectValue, bodyValue, attachmentsValue, sending, errorValue ->
         FormState(
             to = toValue,
             subject = subjectValue,
-            body = bodyValue,
+            bodyHtml = bodyValue,
+            attachments = attachmentsValue,
             isSending = sending,
             error = errorValue
         )
@@ -82,7 +89,8 @@ class ComposeViewModel @Inject constructor(
             selectedAccount = selected,
             to = form.to,
             subject = form.subject,
-            body = form.body,
+            bodyHtml = form.bodyHtml,
+            attachments = form.attachments,
             isSending = form.isSending,
             error = form.error
         )
@@ -110,12 +118,26 @@ class ComposeViewModel @Inject constructor(
         subject.value = value
     }
 
-    fun updateBody(value: String) {
-        body.value = value
+    fun updateBodyHtml(value: String) {
+        bodyHtml.value = value
     }
 
     fun selectAccount(account: EmailAccount) {
         selectedAccountId.value = account.id
+    }
+
+    fun addAttachment(attachment: EmailAttachment) {
+        attachments.update { current ->
+            if (current.any { it.contentId != null && it.contentId == attachment.contentId && attachment.inline }) {
+                current
+            } else {
+                current + attachment
+            }
+        }
+    }
+
+    fun removeAttachment(attachment: EmailAttachment) {
+        attachments.update { current -> current.filterNot { it == attachment } }
     }
 
     fun send(onComplete: (Action) -> Unit) {
@@ -125,6 +147,14 @@ class ComposeViewModel @Inject constructor(
             error.value = "Recipient is required"
             return
         }
+        val attachmentsSnapshot = state.value.attachments
+        val preparedHtml = attachmentsSnapshot.fold(state.value.bodyHtml) { acc, attachment ->
+            if (attachment.inline && attachment.placeholder != null && attachment.contentId != null) {
+                acc.replace(attachment.placeholder, "cid:${attachment.contentId}")
+            } else {
+                acc
+            }
+        }
         viewModelScope.launch {
             isSending.value = true
             error.value = null
@@ -133,12 +163,14 @@ class ComposeViewModel @Inject constructor(
                     account = account,
                     to = recipients,
                     subject = state.value.subject,
-                    body = state.value.body
+                    bodyHtml = preparedHtml,
+                    attachments = attachmentsSnapshot
                 )
             }.onSuccess {
                 to.value = ""
                 subject.value = ""
-                body.value = ""
+                bodyHtml.value = ""
+                attachments.value = emptyList()
                 onComplete(Action.EmailSent())
             }.onFailure {
                 error.value = it.message

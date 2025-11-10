@@ -4,7 +4,7 @@
     <!-- Inbox -->
     <string name="inbox_title">Inbox</string>
     <string name="inbox_vip_contacts">VIP Contacts</string>
-    <string name="inbox_syncing">Syncing inbox&#8230;</string>
+    <string name="inbox_syncing">Syncing folder&#8230;</string>
     <string name="inbox_no_messages">No messages yet.</string>
     <string name="inbox_empty_title">Add your first account</string>
     <string name="inbox_empty_message">Add an email account to start receiving VIP mail.</string>
@@ -18,6 +18,20 @@
     <string name="compose_body">Message</string>
     <string name="compose_send">Send</string>
     <string name="compose_sending">Sending&#8230;</string>
+    <string name="compose_toolbar_bold">Bold</string>
+    <string name="compose_toolbar_italic">Italic</string>
+    <string name="compose_toolbar_underline">Underline</string>
+    <string name="compose_toolbar_font_size">Font size</string>
+    <string name="compose_add_attachment">Add attachment</string>
+    <string name="compose_insert_image">Insert image</string>
+    <string name="compose_attachments">Attachments</string>
+    <string name="compose_inline_indicator">Inline</string>
+    <string name="compose_remove_attachment">Remove attachment</string>
+    <string name="compose_attachment_error">Unable to add attachment</string>
+    <string name="compose_default_attachment_name">Attachment</string>
+    <string name="compose_font_size_small">Small</string>
+    <string name="compose_font_size_normal">Normal</string>
+    <string name="compose_font_size_large">Large</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -80,6 +94,8 @@
 
     <!-- Inbox item -->
     <string name="message_action_toggle_vip">Toggle VIP</string>
+    <string name="message_action_mark_read">Mark as read</string>
+    <string name="message_action_mark_unread">Mark as unread</string>
 
     <!-- Common content descriptions -->
     <string name="content_back">Back</string>

@@ -76,7 +76,9 @@ fun MainNavigation(
                 onSelectAccount = viewModel::selectAccount,
                 onUpdateTo = viewModel::updateTo,
                 onUpdateSubject = viewModel::updateSubject,
-                onUpdateBody = viewModel::updateBody,
+                onUpdateBodyHtml = viewModel::updateBodyHtml,
+                onAddAttachment = viewModel::addAttachment,
+                onRemoveAttachment = viewModel::removeAttachment,
                 onSend = {
                     viewModel.send { action ->
                         when (action) {
