@@ -16,7 +16,7 @@ import com.vipmail.data.model.VipSender
         EmailMessage::class,
         VipSender::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(DatabaseConverters::class)

@@ -8,6 +8,7 @@ import com.vipmail.data.repository.AccountRepository
 import com.vipmail.data.repository.MailRepository
 import com.vipmail.domain.usecase.FetchEmailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,6 +48,7 @@ class InboxViewModel @Inject constructor(
     private val loading = MutableStateFlow(false)
     private val error = MutableStateFlow<String?>(null)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<State> = combine(
         loading,
         accountRepository.observeAccounts(),
@@ -106,7 +108,9 @@ class InboxViewModel @Inject constructor(
             loading.value = true
             error.value = null
             runCatching { fetchEmailsUseCase(account) }
-                .onFailure { throwable -> error.value = throwable.message }
+                .onFailure { throwable ->
+                    error.value = throwable.localizedMessage ?: "Failed to refresh inbox"
+                }
             loading.value = false
         }
     }

@@ -2,6 +2,7 @@ package com.vipmail.data.network
 
 import android.util.Log
 import com.vipmail.data.model.EmailAccount
+import com.vipmail.data.model.MailSecurity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Properties
@@ -17,6 +18,7 @@ class SmtpService @Inject constructor() {
 
     suspend fun sendEmail(
         account: EmailAccount,
+        password: String,
         to: List<String>,
         subject: String,
         body: String
@@ -26,12 +28,25 @@ class SmtpService @Inject constructor() {
             put("mail.smtp.host", account.smtpServer)
             put("mail.smtp.port", account.smtpPort.toString())
             put("mail.smtp.auth", "true")
-            put("mail.smtp.starttls.enable", "true")
+            when (account.smtpSecurity) {
+                MailSecurity.SSL_TLS -> {
+                    put("mail.smtp.ssl.enable", "true")
+                    put("mail.smtp.starttls.enable", "false")
+                }
+                MailSecurity.STARTTLS -> {
+                    put("mail.smtp.starttls.enable", "true")
+                    put("mail.smtp.ssl.enable", "false")
+                }
+                MailSecurity.NONE -> {
+                    put("mail.smtp.starttls.enable", "false")
+                    put("mail.smtp.ssl.enable", "false")
+                }
+            }
         }
 
         val session = Session.getInstance(props, object : javax.mail.Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
-                return PasswordAuthentication(account.username, account.password)
+                return PasswordAuthentication(account.username, password)
             }
         })
 
@@ -55,6 +70,44 @@ class SmtpService @Inject constructor() {
 
     companion object {
         private const val TAG = "SmtpService"
+    }
+
+    suspend fun testConnection(
+        account: EmailAccount,
+        password: String
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        runCatching {
+            val props = Properties().apply {
+                put("mail.transport.protocol", "smtp")
+                put("mail.smtp.host", account.smtpServer)
+                put("mail.smtp.port", account.smtpPort.toString())
+                put("mail.smtp.auth", "true")
+                when (account.smtpSecurity) {
+                    MailSecurity.SSL_TLS -> {
+                        put("mail.smtp.ssl.enable", "true")
+                        put("mail.smtp.starttls.enable", "false")
+                    }
+                    MailSecurity.STARTTLS -> {
+                        put("mail.smtp.starttls.enable", "true")
+                        put("mail.smtp.ssl.enable", "false")
+                    }
+                    MailSecurity.NONE -> {
+                        put("mail.smtp.starttls.enable", "false")
+                        put("mail.smtp.ssl.enable", "false")
+                    }
+                }
+            }
+
+            val session = Session.getInstance(props, object : javax.mail.Authenticator() {
+                override fun getPasswordAuthentication(): PasswordAuthentication {
+                    return PasswordAuthentication(account.username, password)
+                }
+            })
+
+            val transport = session.getTransport("smtp")
+            transport.connect()
+            transport.close()
+        }
     }
 }
 

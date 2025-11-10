@@ -20,7 +20,9 @@ object DataModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "vipmail.db").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "vipmail.db")
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     fun provideEmailAccountDao(database: AppDatabase): EmailAccountDao = database.emailAccountDao()

@@ -21,7 +21,8 @@ class MailRepository @Inject constructor(
     private val emailMessageDao: EmailMessageDao,
     private val vipSenderDao: VipSenderDao,
     private val imapService: ImapService,
-    private val smtpService: SmtpService
+    private val smtpService: SmtpService,
+    private val credentialStorage: CredentialStorage
 ) {
 
     fun observeInbox(accountId: Long): Flow<List<EmailMessage>> =
@@ -43,10 +44,13 @@ class MailRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
 
     suspend fun syncInbox(account: EmailAccount) = withContext(Dispatchers.IO) {
+        val password = credentialStorage.getPassword(account.id)
+            ?: throw IllegalStateException("Credentials missing for ${account.emailAddress}")
+
         val vipSenders = vipSenderDao.observeVipSenders(account.id).first()
         val vipSet = vipSenders.map { it.emailAddress.lowercase() }.toSet()
 
-        val remoteMessages = imapService.fetchInbox(account).map { message ->
+        val remoteMessages = imapService.fetchInbox(account, password).map { message ->
             val sender = message.sender.lowercase()
             message.copy(isVip = vipSet.contains(sender))
         }
@@ -71,7 +75,10 @@ class MailRepository @Inject constructor(
             body
         }
 
-        smtpService.sendEmail(account, to, subject, finalBody)
+        val password = credentialStorage.getPassword(account.id)
+            ?: throw IllegalStateException("Missing credentials for account ${account.emailAddress}")
+
+        smtpService.sendEmail(account, password, to, subject, finalBody)
     }
 
     suspend fun toggleVip(accountId: Long, email: String): Boolean {
@@ -91,5 +98,11 @@ class MailRepository @Inject constructor(
 
     suspend fun getVipMessages(accountId: Long): List<EmailMessage> =
         emailMessageDao.getVipMessages(accountId)
+
+    suspend fun testImapConnection(account: EmailAccount, password: String): Result<Unit> =
+        imapService.testConnection(account, password)
+
+    suspend fun testSmtpConnection(account: EmailAccount, password: String): Result<Unit> =
+        smtpService.testConnection(account, password)
 }
 

@@ -1,5 +1,7 @@
 package com.vipmail.ui.compose
 
+import androidx.activity.compose.BackHandler
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Send
+import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -50,6 +52,8 @@ fun ComposeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val accountMenuExpanded = remember { mutableStateOf(false) }
 
+    BackHandler { onClose() }
+
     LaunchedEffect(state.error) {
         state.error?.let { snackbarHostState.showSnackbar(it) }
     }
@@ -68,7 +72,7 @@ fun ComposeScreen(
                         onClick = onSend,
                         enabled = !state.isSending
                     ) {
-                        Icon(Icons.Outlined.Send, contentDescription = "Send")
+                        Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = "Send")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors()

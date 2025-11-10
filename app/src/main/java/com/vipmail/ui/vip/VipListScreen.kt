@@ -1,5 +1,7 @@
 package com.vipmail.ui.vip
 
+import androidx.activity.compose.BackHandler
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +42,8 @@ fun VipListScreen(
     onAddVip: () -> Unit,
     onRemoveVip: (VipSender) -> Unit
 ) {
+    BackHandler { onAction(VipViewModel.Action.NavigateBack) }
+
     val accountMenuExpanded = remember { mutableStateOf(false) }
 
     Scaffold(

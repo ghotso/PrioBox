@@ -7,6 +7,7 @@ import com.vipmail.data.model.VipSender
 import com.vipmail.data.repository.AccountRepository
 import com.vipmail.data.repository.MailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,7 @@ class VipViewModel @Inject constructor(
     private val newVipEmail = MutableStateFlow("")
     private val error = MutableStateFlow<String?>(null)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<State> = combine(
         accountRepository.observeAccounts(),
         selectedAccountId,

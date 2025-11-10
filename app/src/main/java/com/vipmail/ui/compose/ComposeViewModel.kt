@@ -43,15 +43,35 @@ class ComposeViewModel @Inject constructor(
     private val isSending = MutableStateFlow(false)
     private val error = MutableStateFlow<String?>(null)
 
-    val state: StateFlow<State> = combine(
-        accountRepository.observeAccounts(),
-        selectedAccountId,
+    private data class FormState(
+        val to: String,
+        val subject: String,
+        val body: String,
+        val isSending: Boolean,
+        val error: String?
+    )
+
+    private val formState = combine(
         to,
         subject,
         body,
         isSending,
         error
-    ) { accounts, accountId, toValue, subjectValue, bodyValue, sending, errorValue ->
+    ) { toValue, subjectValue, bodyValue, sending, errorValue ->
+        FormState(
+            to = toValue,
+            subject = subjectValue,
+            body = bodyValue,
+            isSending = sending,
+            error = errorValue
+        )
+    }
+
+    val state: StateFlow<State> = combine(
+        accountRepository.observeAccounts(),
+        selectedAccountId,
+        formState
+    ) { accounts, accountId, form ->
         val selected = when {
             accounts.isEmpty() -> null
             accountId == null -> accounts.first()
@@ -60,11 +80,11 @@ class ComposeViewModel @Inject constructor(
         State(
             accounts = accounts,
             selectedAccount = selected,
-            to = toValue,
-            subject = subjectValue,
-            body = bodyValue,
-            isSending = sending,
-            error = errorValue
+            to = form.to,
+            subject = form.subject,
+            body = form.body,
+            isSending = form.isSending,
+            error = form.error
         )
     }.stateIn(
         viewModelScope,

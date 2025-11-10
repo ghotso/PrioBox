@@ -44,7 +44,7 @@ fun MainNavigation(
                         InboxViewModel.Action.OpenCompose -> navController.navigate(Destinations.COMPOSE)
                         InboxViewModel.Action.OpenSettings -> navController.navigate(Destinations.SETTINGS)
                         is InboxViewModel.Action.OpenVip -> navController.navigate(Destinations.VIP)
-                        InboxViewModel.Action.NavigateBack -> navController.popBackStack()
+                        InboxViewModel.Action.NavigateBack -> navController.navigateUp()
                         else -> Unit
                     }
                 }
@@ -56,7 +56,7 @@ fun MainNavigation(
             val state = viewModel.state.collectAsStateWithLifecycle().value
             ComposeScreen(
                 state = state,
-                onClose = { navController.popBackStack() },
+                onClose = { navController.navigateUp() },
                 onSelectAccount = viewModel::selectAccount,
                 onUpdateTo = viewModel::updateTo,
                 onUpdateSubject = viewModel::updateSubject,
@@ -64,8 +64,8 @@ fun MainNavigation(
                 onSend = {
                     viewModel.send { action ->
                         when (action) {
-                            ComposeViewModel.Action.Close -> navController.popBackStack()
-                            is ComposeViewModel.Action.EmailSent -> navController.popBackStack()
+                            ComposeViewModel.Action.Close -> navController.navigateUp()
+                            is ComposeViewModel.Action.EmailSent -> navController.navigateUp()
                         }
                     }
                 }
@@ -77,7 +77,7 @@ fun MainNavigation(
             val state = viewModel.state.collectAsStateWithLifecycle().value
             SettingsScreen(
                 state = state,
-                onBack = { navController.popBackStack() },
+                onBack = { navController.navigateUp() },
                 onAddAccount = {
                     viewModel.startCreateAccount()
                     navController.navigate(Destinations.ACCOUNT_EDIT)
@@ -91,11 +91,16 @@ fun MainNavigation(
 
         composable(Destinations.ACCOUNT_EDIT) {
             val viewModel: SettingsViewModel = hiltViewModel()
+            val settingsState = viewModel.state.collectAsStateWithLifecycle().value
             AccountEditScreen(
-                state = viewModel.state.accountEditorState,
-                onClose = { navController.popBackStack() },
+                state = settingsState.accountEditorState,
+                imapTestState = settingsState.imapTestState,
+                smtpTestState = settingsState.smtpTestState,
+                onClose = { navController.navigateUp() },
                 onUpdate = viewModel::onEditorChange,
-                onSave = viewModel::onAccountSaved
+                onSave = viewModel::onAccountSaved,
+                onTestImap = viewModel::testImapConnection,
+                onTestSmtp = viewModel::testSmtpConnection
             )
         }
 
@@ -106,7 +111,7 @@ fun MainNavigation(
                 state = state,
                 onAction = { action ->
                     when (action) {
-                        VipViewModel.Action.NavigateBack -> navController.popBackStack()
+                        VipViewModel.Action.NavigateBack -> navController.navigateUp()
                     }
                 },
                 onSelectAccount = viewModel::selectAccount,
