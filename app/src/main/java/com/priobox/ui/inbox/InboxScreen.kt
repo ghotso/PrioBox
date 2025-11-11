@@ -1,20 +1,24 @@
 package com.priobox.ui.inbox
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material.icons.outlined.MarkEmailRead
-import androidx.compose.material.icons.outlined.MarkEmailUnread
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Settings
@@ -47,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -102,6 +107,15 @@ fun InboxScreen(
                             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                         )
                     }
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+                    NavigationDrawerItem(
+                        label = { Text(stringResource(R.string.settings_title)) },
+                        selected = false,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            onAction(InboxViewModel.Action.OpenSettings)
+                        }
+                    )
                 }
             }
         }
@@ -153,15 +167,6 @@ fun InboxScreen(
                                     )
                                 }
                             }
-                        }
-
-                        IconButton(
-                            onClick = { onAction(InboxViewModel.Action.OpenSettings) }
-                        ) {
-                            Icon(
-                                Icons.Outlined.Settings,
-                                contentDescription = stringResource(R.string.settings_title)
-                            )
                         }
 
                         IconButton(
@@ -307,6 +312,7 @@ private fun EmptyAccountsState(
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 private fun EmailRow(
     message: EmailMessage,
     onToggleRead: (Boolean) -> Unit,
@@ -316,10 +322,23 @@ private fun EmailRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onOpenMessage() }
+            .combinedClickable(
+                onClick = { onOpenMessage() },
+                onLongClick = { onToggleRead(!message.isRead) }
+            )
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        if (!message.isRead) {
+            Box(
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .size(10.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+        }
+
         Column(
             modifier = Modifier.weight(1f)
         ) {
@@ -333,12 +352,6 @@ private fun EmailRow(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.padding(4.dp))
-                if (message.isVip) {
-                    AssistChip(
-                        onClick = { },
-                        label = { Text(stringResource(R.string.badge_vip)) }
-                    )
-                }
             }
             Text(
                 text = message.subject,
@@ -357,25 +370,14 @@ private fun EmailRow(
             )
         }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
+        IconButton(
+            onClick = onToggleVip,
+            modifier = Modifier.size(40.dp)
         ) {
-            IconButton(onClick = { onToggleRead(!message.isRead) }) {
-                val isRead = message.isRead
-                Icon(
-                    imageVector = if (isRead) Icons.Outlined.MarkEmailUnread else Icons.Outlined.MarkEmailRead,
-                    contentDescription = stringResource(
-                        if (isRead) R.string.message_action_mark_unread else R.string.message_action_mark_read
-                    )
-                )
-            }
-            IconButton(onClick = onToggleVip) {
-                Icon(
-                    imageVector = if (message.isVip) Icons.Outlined.Star else Icons.Outlined.StarBorder,
-                    contentDescription = stringResource(R.string.message_action_toggle_vip)
-                )
-            }
+            Icon(
+                imageVector = if (message.isVip) Icons.Outlined.Star else Icons.Outlined.StarBorder,
+                contentDescription = stringResource(R.string.message_action_toggle_vip)
+            )
         }
     }
 }

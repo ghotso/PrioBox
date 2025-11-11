@@ -16,6 +16,7 @@
     <string name="compose_to">To</string>
     <string name="compose_subject">Subject</string>
     <string name="compose_body">Message</string>
+    <string name="compose_body_placeholder">Start writing…</string>
     <string name="compose_send">Send</string>
     <string name="compose_sending">Sending&#8230;</string>
     <string name="compose_toolbar_bold">Bold</string>
@@ -32,6 +33,9 @@
     <string name="compose_font_size_small">Small</string>
     <string name="compose_font_size_normal">Normal</string>
     <string name="compose_font_size_large">Large</string>
+    <string name="compose_more_actions">More actions</string>
+    <string name="compose_show_formatting">Formatting options</string>
+    <string name="compose_hide_formatting">Hide formatting</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

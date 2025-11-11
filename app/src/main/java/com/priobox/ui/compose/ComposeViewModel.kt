@@ -56,21 +56,53 @@ class ComposeViewModel @Inject constructor(
         val error: String?
     )
 
-    private val formState = combine(
+    private data class FieldsState(
+        val to: String,
+        val subject: String,
+        val bodyHtml: String
+    )
+
+    private data class MetaState(
+        val attachments: List<EmailAttachment>,
+        val isSending: Boolean,
+        val error: String?
+    )
+
+    private val fieldsState = combine(
         to,
         subject,
-        bodyHtml,
+        bodyHtml
+    ) { toValue, subjectValue, bodyValue ->
+        FieldsState(
+            to = toValue,
+            subject = subjectValue,
+            bodyHtml = bodyValue
+        )
+    }
+
+    private val metaState = combine(
         attachments,
         isSending,
         error
-    ) { toValue, subjectValue, bodyValue, attachmentsValue, sending, errorValue ->
-        FormState(
-            to = toValue,
-            subject = subjectValue,
-            bodyHtml = bodyValue,
+    ) { attachmentsValue, sending, errorValue ->
+        MetaState(
             attachments = attachmentsValue,
             isSending = sending,
             error = errorValue
+        )
+    }
+
+    private val formState = combine(
+        fieldsState,
+        metaState
+    ) { fields, meta ->
+        FormState(
+            to = fields.to,
+            subject = fields.subject,
+            bodyHtml = fields.bodyHtml,
+            attachments = meta.attachments,
+            isSending = meta.isSending,
+            error = meta.error
         )
     }
 

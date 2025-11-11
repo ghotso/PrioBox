@@ -14,6 +14,7 @@
     <string name="compose_to">An</string>
     <string name="compose_subject">Betreff</string>
     <string name="compose_body">Nachricht</string>
+    <string name="compose_body_placeholder">Schreibe los…</string>
     <string name="compose_send">Senden</string>
     <string name="compose_sending">Senden&#8230;</string>
     <string name="compose_toolbar_bold">Fett</string>
@@ -30,6 +31,9 @@
     <string name="compose_font_size_small">Klein</string>
     <string name="compose_font_size_normal">Normal</string>
     <string name="compose_font_size_large">Groß</string>
+    <string name="compose_more_actions">Weitere Aktionen</string>
+    <string name="compose_show_formatting">Formatierungsoptionen</string>
+    <string name="compose_hide_formatting">Formatierung ausblenden</string>
 
     <string name="settings_title">Einstellungen</string>
     <string name="settings_accounts">Konten</string>

@@ -86,10 +86,10 @@ class MailRepository @Inject constructor(
         attachments: List<EmailAttachment>
     ) = withContext(Dispatchers.IO) {
         val htmlWithSignature = if (account.signatureEnabled && account.signature.isNotBlank()) {
-            val escapedSignature = Html.escapeHtml(account.signature).replace(\"\\n\", \"<br/>\")
+            val escapedSignature = Html.escapeHtml(account.signature).replace("\n", "<br/>")
             buildString {
                 append(bodyHtml.trimEnd())
-                append(\"<br/><br/>\")
+                append("<br/><br/>")
                 append(escapedSignature)
             }
         } else {
@@ -97,7 +97,7 @@ class MailRepository @Inject constructor(
         }
 
         val password = credentialStorage.getPassword(account.id)
-            ?: throw IllegalStateException(\"Missing credentials for account ${account.emailAddress}\")
+            ?: throw IllegalStateException("Missing credentials for account ${account.emailAddress}")
 
         val bodyText = HtmlCompat.fromHtml(htmlWithSignature, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
 
@@ -106,13 +106,13 @@ class MailRepository @Inject constructor(
                 try {
                     context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
                 } catch (exception: IOException) {
-                    Log.e(TAG, \"Failed to read attachment ${attachment.displayName}\", exception)
+                    Log.e(TAG, "Failed to read attachment ${attachment.displayName}", exception)
                     null
                 }
             }
 
             val contentBytes = bytes ?: run {
-                Log.w(TAG, \"Skipping attachment ${attachment.displayName}: no data available\")
+                Log.w(TAG, "Skipping attachment ${attachment.displayName}: no data available")
                 null
             }
 
